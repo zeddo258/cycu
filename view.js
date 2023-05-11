@@ -2,7 +2,6 @@ let $ = require('jquery') // Module jquery to select
 let fs = require('fs') // Module fs to rw file
 
 const reader =  require('xlsx') // Module xlsx
-// For callback parameter 
 const file = reader.readFile('./test.xlsx')
 
 let worksheets = {} 
@@ -12,11 +11,11 @@ let worksheets = {}
 $('#submit').on('click', () => {
         
         let res = confirm("你確定要送出以下的資料嗎?\n" + 
-                            document.getElementById("name").value + '\n' +
-                            document.getElementById("id").value + '\n' + 
-                            document.getElementById("dep").value + '\n' + 
-                            document.getElementById("phone").value + '\n' + 
-                            document.getElementById("date").value + '\n' )
+                            "姓名(Name)：" + document.getElementById("name").value + '\n' +
+                            "ID：" + document.getElementById("id").value + '\n' + 
+                            "科系(Department)：" + document.getElementById("dep").value + '\n' + 
+                            "電話(Phone number)：" + document.getElementById("phone").value + '\n' + 
+                            "日期(Date)：" + document.getElementById("date").value + '\n' )
 
         let total = parseInt(document.getElementById("o-19w").value) + 
                     parseInt(document.getElementById("o-16w").value) +
@@ -32,11 +31,10 @@ $('#submit').on('click', () => {
                     parseInt(document.getElementById("ev").value) + 
                     parseInt(document.getElementById("nat").value) + 
                     parseInt(document.getElementById("wu").value) +
-                    parseInt(document.getElementById("usb").value) + 
-                    parseInt(document.getElementById("pho").value) + 
-                    parseInt(document.getElementById("pro").value) 
+                    parseInt(document.getElementById("usb").value)  
+
         
-        if ( total > 0 && valid() ) {
+        if ( total > 0 && res && valid ) {
             worksheets = {} 
             for (const sheetName of file.SheetNames) {
                 worksheets[sheetName] = reader.utils.sheet_to_json(file.Sheets[sheetName])
@@ -70,18 +68,18 @@ $('#submit').on('click', () => {
                 "自然輸入法" : document.getElementById("nat").value, 
                 "無蝦米" : document.getElementById("wu").value, 
                 "金蝶333" : document.getElementById("usb").value,
-                "PhotoExplorer" : document.getElementById("pho").value, 
-                "ProtelDxp" : document.getElementById("pro").value
             })
 
             reader.utils.sheet_add_json(file.Sheets["Sheet1"], worksheets.Sheet1)
             reader.writeFile(file,'./test.xlsx')
+            reset()
+            window.location.href = 'index.html'
         }
 
-        else {
-            var form = document.getElementById("submit")
-            form.addEventListener('submit', stopSubmit)
-        }
+        else if (!valid() )
+            alert("請輸入想要借用的軟體!!!")
+        
+        
 })
 
 function valid() {
@@ -96,6 +94,9 @@ function stopSubmit(event) {
     event.preventDefault(); 
 }
 
-function process() {
-    
-}
+function reset() {
+    const inputs = document.querySelectorAll('#date, #dep,#id,#name,#phone,#o-19w,#o-16w,#o-19m,#o-16m,#w10-32,#w10-64,#sas93,#sas-94,#vs-15,#vs-13,#vs-12,#ev,#nat,#wu,#usb')
+    inputs.forEach(input => {
+    input.value = '';
+    });
+ }
